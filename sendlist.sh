@@ -62,8 +62,9 @@ function help() {
         echo "          -q: show top senders from mail queue"
         echo "          -s: show top today senders from exim mainlog"
         echo "          -m sender_address: show messages in queue from sender_address"
-        echo "          -b message_id: show message body in mail_id"
-        echo "          -h message_id: show message header in mail_id"
+        echo "          -b message_id: show message body with message_id"
+        echo "          -h message_id: show message header with message_id"
+	echo "          -bh message_id: show full message with message_id"
         echo "          -r sender_address: remove mail from queue from sender_address, return number of removed messages"
         echo "          --help: show this help"
 }
@@ -86,6 +87,10 @@ case "$1" in
 -b)
         body $2
         ;;
+-bh)
+	header $2
+	body $2
+	;;
 -r)
         remove $2
         ;;
