@@ -31,6 +31,7 @@ function body() {
         local ID=$1
         if [[ $ID =~ ^[0-9a-zA-Z]{6}-[0-9a-zA-Z]{6}-[0-9a-zA-Z]{2}$ ]]; then
                 /usr/sbin/exim -Mvb $ID
+		echo "";
 		echo "---------------------------------------------------------------";
 		echo "body hash: `/usr/sbin/exim -Mvb $ID | md5sum| awk '{print $1}'`";
         else
