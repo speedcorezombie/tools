@@ -59,6 +59,12 @@ function remove() {
         fi
 }
 
+# remove frozen and bounces
+function remove_frozen() {
+	echo "Removed frozen messages: `/usr/sbin/exiqgrep -iz | xargs /usr/sbin/exim -Mrm | wc -l`"
+	echo "Removed bounces `/usr/sbin/exiqgrep -iz \"<>\" | xargs /usr/sbin/exim -Mrm | wc -l`"
+}
+
 # help
 function help() {
         echo "Usage: sendlist.sh COMMAND"
@@ -69,6 +75,7 @@ function help() {
         echo "          -h message_id: show message header with message_id"
 	echo "          -bh message_id: show full message with message_id"
         echo "          -r sender_address: remove mail from queue from sender_address, return number of removed messages"
+	echo "		-z: remove bounce and frozen messages. Also call with -q and -s commands"
         echo "          --help: show this help"
 }
 
@@ -97,6 +104,9 @@ case "$1" in
 -r)
         remove $2
         ;;
+-z)
+	remove_frozen
+	;; 
 --help)
         help
         ;;
