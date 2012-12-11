@@ -83,9 +83,11 @@ function help() {
 
 case "$1" in
 -q)
+	remove_frozen
         queue
         ;;
 -m)
+	remove_frozen
         maillist $2
         ;;
 -s)
