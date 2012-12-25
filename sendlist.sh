@@ -89,8 +89,8 @@ function remove_frozen() {
 # help
 function help() {
         echo "Usage: sendlist.sh COMMAND"
-        echo "          -q: show top senders from mail queue"
-        echo "          -s: show top today senders from exim mainlog"
+        echo "          -q: show top senders and their domains from mail queue"
+        echo "          -s: show top today senders and their domains from exim mainlog"
         echo "          -m sender_address: show messages in queue from sender_address"
         echo "          -b message_id: show message body with message_id"
         echo "          -h message_id: show message header with message_id"
