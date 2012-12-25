@@ -1,11 +1,17 @@
 #!/bin/bash
 
 # get top senders from mail queue
+# and get top sender's domains from queue
 function queue() {
         echo "------------------------------------------"
         echo "|       Current queue top senders:       |"
         echo "------------------------------------------"
-        /usr/sbin/exiqgrep -b| awk '{print $3}'| grep -v "<>" |awk -F"<" '{print $2}' | awk -F">" '{print $1}'| sort | uniq -c | sort -nr | head -n20
+        /usr/sbin/exiqgrep -b| awk '{print $3}'| grep -v "<>" |awk -F"<" '{print $2}' | awk -F">" '{print $1}'| sort | uniq -c | sort -nr | head 
+	echo ""
+        echo "------------------------------------------"
+        echo "|  Current queue top sender's domains:   |"
+        echo "------------------------------------------"
+	/usr/bin/exiqgrep -b | awk '{print $3}'| awk -F"@" '{print $2}'| sed -e 's/>//'| grep . |sort | uniq -c| sort -nr | head 
 }
 
 # get top senders from mainlog for current date
@@ -13,7 +19,12 @@ function sendlist() {
         echo "------------------------------------------"
         echo "|           Today top senders:           |"
         echo "------------------------------------------"
-        grep "<=" /var/log/exim_mainlog | grep `date +%F`  | awk '{print $5}'| grep -v "<>" | sort | uniq -c | sort -rn| head -n20
+        grep "<=" /var/log/exim_mainlog | grep `date +%F`  | awk '{print $5}'| grep -v "<>" | sort | uniq -c | sort -rn| head
+	echo ""
+        echo "------------------------------------------"
+        echo "|      Today top sender's domains:       |"
+        echo "------------------------------------------"
+	grep "<=" /var/log/exim_mainlog | grep `date +%F`  | awk '{print $5}'| grep -v "<>" | awk -F"@" '{print $2}' | sort | uniq -c | sort -rn| head
 }
 
 # get message id by sender
@@ -59,10 +70,20 @@ function remove() {
         fi
 }
 
+# remove messages by domain
+function remove_dom() {
+        local DOMAIN=$1;
+        if [[ $DOMAIN =~ ^[0-9a-zA-Z.-]+$ ]]; then
+                /usr/sbin/exiqgrep -if $DOMAIN | xargs /usr/sbin/exim -Mrm | wc -l;
+        else
+                echo "wrong domain"
+        fi
+}
+
 # remove frozen and bounces
 function remove_frozen() {
 	echo "Removed frozen messages: `/usr/sbin/exiqgrep -iz | xargs /usr/sbin/exim -Mrm | wc -l`"
-	echo "Removed bounces `/usr/sbin/exiqgrep -iz \"<>\" | xargs /usr/sbin/exim -Mrm | wc -l`"
+	echo "Removed bounces: `/usr/sbin/exiqgrep -iz \"<>\" | xargs /usr/sbin/exim -Mrm | wc -l`"
 }
 
 # help
@@ -75,7 +96,8 @@ function help() {
         echo "          -h message_id: show message header with message_id"
 	echo "          -bh message_id: show full message with message_id"
         echo "          -r sender_address: remove mail from queue from sender_address, return number of removed messages"
-	echo "		-z: remove bounce and frozen messages. Also call with -q and -s commands"
+	echo "          -d domain: remove mail from queue from domain, return number of removed messages"
+	echo "          -z: remove bounce and frozen messages. Also call with -q and -s commands"
         echo "          --help: show this help"
 }
 
@@ -87,7 +109,6 @@ case "$1" in
         queue
         ;;
 -m)
-	remove_frozen
         maillist $2
         ;;
 -s)
@@ -105,6 +126,9 @@ case "$1" in
 	;;
 -r)
         remove $2
+        ;;
+-d)
+        remove_dom $2
         ;;
 -z)
 	remove_frozen
