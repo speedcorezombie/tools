@@ -11,7 +11,7 @@ function queue() {
         echo "------------------------------------------"
         echo "|  Current queue top sender's domains:   |"
         echo "------------------------------------------"
-	/usr/bin/exiqgrep -b | awk '{print $3}'| awk -F"@" '{print $2}'| sed -e 's/>//'| grep . |sort | uniq -c| sort -nr | head 
+	/usr/sbin/exiqgrep -b | awk '{print $3}'| awk -F"@" '{print $2}'| sed -e 's/>//'| grep . |sort | uniq -c| sort -nr | head 
 }
 
 # get top senders from mainlog for current date
