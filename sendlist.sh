@@ -37,6 +37,16 @@ function maillist() {
         fi
 }
 
+# get message id by domain
+function maillist_dom() {
+        local DOMAIN=$1;
+        if [[ $DOMAIN =~ ^[0-9a-zA-Z.-]+$ ]]; then
+                /usr/sbin/exiqgrep -bf $DOMAIN;
+        else
+                echo "wrong domain"
+        fi
+}
+
 # get message body by id
 function body() {
         local ID=$1
@@ -89,16 +99,17 @@ function remove_frozen() {
 # help
 function help() {
         echo "Usage: sendlist.sh COMMAND"
-        echo "          -q: show top senders and their domains from mail queue"
-        echo "          -s: show top today senders and their domains from exim mainlog"
-        echo "          -m sender_address: show messages in queue from sender_address"
-        echo "          -b message_id: show message body with message_id"
-        echo "          -h message_id: show message header with message_id"
-	echo "          -bh message_id: show full message with message_id"
-        echo "          -r sender_address: remove mail from queue from sender_address, return number of removed messages"
-	echo "          -d domain: remove mail from queue from domain, return number of removed messages"
-	echo "          -z: remove bounce and frozen messages. Also call with -q and -s commands"
-        echo "          --help: show this help"
+        echo "          -q:                 show top senders and their domains from mail queue"
+        echo "          -s: show top today  senders and their domains from exim mainlog"
+        echo "          -m sender_address:  show messages in queue from sender_address"
+        echo "          -md sender_address: show messages in queue from sender_address"
+        echo "          -b message_id:      show message body with message_id"
+        echo "          -h message_id:      show message header with message_id"
+	echo "          -bh message_id:     show full message with message_id"
+        echo "          -r sender_address:  remove mail from queue from sender_address, return number of removed messages"
+	echo "          -rd domain:         remove mail from queue from domain, return number of removed messages"
+	echo "          -z:                 remove bounce and frozen messages. Also call with -q and -s commands"
+        echo "          --help:             show this help"
 }
 
 ## main()
@@ -111,6 +122,9 @@ case "$1" in
 -m)
         maillist $2
         ;;
+-md)
+	maillist_dom $2
+	;;
 -s)
         sendlist
         ;;
@@ -127,7 +141,7 @@ case "$1" in
 -r)
         remove $2
         ;;
--d)
+-rd)
         remove_dom $2
         ;;
 -z)
