@@ -47,6 +47,17 @@ function maillist_dom() {
         fi
 }
 
+# get frozen messages
+function frozenlist() {
+                /usr/sbin/exiqgrep -bz 
+}
+
+# get bounce messages
+function bouncelist() {
+                /usr/sbin/exiqgrep -bf "<>"
+}
+
+
 # get message body by id
 function body() {
         local ID=$1
@@ -90,10 +101,16 @@ function remove_dom() {
         fi
 }
 
-# remove frozen and bounces
+
+
+# remove frozen
 function remove_frozen() {
-	echo "Removed frozen messages: `/usr/sbin/exiqgrep -iz | xargs /usr/sbin/exim -Mrm | wc -l`"
-	echo "Removed bounces: `/usr/sbin/exiqgrep -iz \"<>\" | xargs /usr/sbin/exim -Mrm | wc -l`"
+	echo "Removed frozen messages: `/usr/sbin/exiqgrep -iz | xargs /usr/sbin/exim -Mrm 2>/dev/null| wc -l`"
+}
+
+# remove bounces
+function remove_bounce() {
+        echo "Removed bounces: `/usr/sbin/exiqgrep -if \"<>\" | xargs /usr/sbin/exim -Mrm 2>/dev/null| wc -l`"
 }
 
 # help
@@ -103,12 +120,15 @@ function help() {
         echo "          -s: show top today  senders and their domains from exim mainlog"
         echo "          -m sender_address:  show messages in queue from sender_address"
         echo "          -md sender_address: show messages in queue from sender_address"
+	echo "          -mz sender_address: show frozen messages in queue"
+	echo "          -mb sender_address: show bounce messages in queue"
         echo "          -b message_id:      show message body with message_id"
         echo "          -h message_id:      show message header with message_id"
 	echo "          -bh message_id:     show full message with message_id"
         echo "          -r sender_address:  remove mail from queue from sender_address, return number of removed messages"
 	echo "          -rd domain:         remove mail from queue from domain, return number of removed messages"
-	echo "          -z:                 remove bounce and frozen messages. Also call with -q and -s commands"
+	echo "          -rz:                remove frozen messages"
+	echo "          -rb:                remove bounce messages"
         echo "          --help:             show this help"
 }
 
@@ -116,7 +136,6 @@ function help() {
 
 case "$1" in
 -q)
-	remove_frozen
         queue
         ;;
 -m)
@@ -125,6 +144,12 @@ case "$1" in
 -md)
 	maillist_dom $2
 	;;
+-mz)
+	frozenlist
+	;;
+-mb)
+	bouncelist
+	;;	
 -s)
         sendlist
         ;;
@@ -144,9 +169,12 @@ case "$1" in
 -rd)
         remove_dom $2
         ;;
--z)
+-rz)
 	remove_frozen
 	;; 
+-rb)
+        remove_bounce
+        ;;
 --help)
         help
         ;;
