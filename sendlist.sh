@@ -119,17 +119,17 @@ function help() {
         echo "          -q:			show top senders and their domains from mail queue"
         echo "          -s:			show top today senders and their domains from exim mainlog"
         echo "          -m sender_address:	show messages in queue from sender_address"
-        echo "          -md sender_address:	show messages in queue from sender_address"
+        echo "          -md sender_domain:	show messages in queue from sender_domain"
 	echo "          -mz:			show frozen messages in queue"
 	echo "          -mb:			show bounce messages in queue"
-        echo "          -b message_id:		show message body with message_id"
-        echo "          -h message_id:		show message header with message_id"
-	echo "          -bh message_id:		show full message with message_id"
+        echo "          -b message_id:	show message body with message_id"
+        echo "          -h message_id:	show message header with message_id"
+	echo "          -bh message_id:	show full message with message_id"
         echo "          -r sender_address:	remove mail from queue from sender_address, return number of removed messages"
-	echo "          -rd domain:		remove mail from queue from domain, return number of removed messages"
+	echo "          -rd sender_domain:	remove mail from queue from domain, return number of removed messages"
 	echo "          -rz:			remove frozen messages"
 	echo "          -rb:			remove bounce messages"
-        echo "          --help:			show this help"
+        echo "          --help:		show this help"
 }
 
 ## main()
